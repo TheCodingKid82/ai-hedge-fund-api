@@ -1,41 +1,64 @@
 from flask import Flask, request, jsonify
-# Fix imports for Vercel deployment
 import os
-import sys
 import json
 from dotenv import load_dotenv
-
-# Add current directory to path to help with imports
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-# Check if we're in a Vercel environment
-IS_VERCEL = os.environ.get('VERCEL', False)
-
-# Import appropriate modules based on environment
-if IS_VERCEL:
-    # Use lightweight versions for Vercel deployment
-    from api.backtester_lite import BacktesterLite as Backtester
-    # Simplified run_hedge_fund function for Vercel
-    def run_hedge_fund(tickers, start_date, end_date, **kwargs):
-        return {
-            "message": "Hedge fund analysis request received and will be processed asynchronously",
-            "parameters": {
-                "tickers": tickers,
-                "start_date": start_date,
-                "end_date": end_date,
-                **kwargs
-            },
-            "status": "queued"
-        }
-else:
-    # Use full versions for local development
-    from api.backtester import Backtester
-    from api.main import run_hedge_fund
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
+
+# Simplified portfolio_management_agent function for Vercel deployment
+def portfolio_management_agent(*args, **kwargs):
+    return "This is a simplified agent for Vercel deployment"
+
+# Simplified backtester for Vercel deployment
+class BacktesterLite:
+    def __init__(self, agent, tickers, start_date, end_date, initial_capital, **kwargs):
+        self.tickers = tickers
+        self.start_date = start_date
+        self.end_date = end_date
+        self.initial_capital = initial_capital
+        self.kwargs = kwargs
+    
+    def run_backtest(self):
+        return {
+            "message": "Backtest request received",
+            "parameters": {
+                "tickers": self.tickers,
+                "start_date": self.start_date,
+                "end_date": self.end_date,
+                "initial_capital": self.initial_capital,
+                **self.kwargs
+            },
+            "status": "processed",
+            "note": "This is a lightweight API deployment. For full functionality, please run the application locally."
+        }
+    
+    def analyze_performance(self):
+        return {
+            "message": "Performance analysis in lightweight version",
+            "note": "This is a simplified API deployed on Vercel. For full functionality, please run the application locally.",
+            "example_metrics": {
+                "sharpe_ratio": 1.5,
+                "max_drawdown": -0.15,
+                "total_return": 0.25
+            }
+        }
+
+# Simplified run_hedge_fund function for Vercel
+def run_hedge_fund(tickers, start_date, end_date, **kwargs):
+    return {
+        "message": "Hedge fund analysis request received",
+        "parameters": {
+            "tickers": tickers,
+            "start_date": start_date,
+            "end_date": end_date,
+            **kwargs
+        },
+        "status": "processed",
+        "note": "This is a lightweight API deployment. For full functionality, please run the application locally."
+    }
 
 @app.route('/')
 def home():
@@ -62,10 +85,8 @@ def backtest():
         selected_analysts = data.get('selected_analysts', [])
         initial_margin_requirement = float(data.get('initial_margin_requirement', 0.0))
         
-        # Create Backtester instance with the agent function
-        from api.agents.portfolio_manager import portfolio_management_agent
-        
-        backtester = Backtester(
+        # Create Backtester instance
+        backtester = BacktesterLite(
             agent=portfolio_management_agent,
             tickers=tickers,
             start_date=start_date,

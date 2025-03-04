@@ -1,6 +1,6 @@
 """
-Lightweight version of the backtester for Vercel deployment.
-This version uses minimal dependencies and simplified functionality.
+Minimal version of the backtester for Vercel deployment.
+Uses only standard libraries and minimal dependencies.
 """
 import json
 import datetime
@@ -31,20 +31,20 @@ class BacktesterLite:
         self.selected_analysts = selected_analysts
         self.initial_margin_requirement = initial_margin_requirement
         
-        # Initialize portfolio
+        # Initialize basic portfolio
         self.portfolio = {ticker: 0 for ticker in tickers}
         self.cash = initial_capital
-        self.portfolio_values = []
         
     def run_backtest(self):
         """
-        Simplified backtest that returns a basic response instead of running a full simulation
+        Simplified backtest that returns a status message
         """
-        # For deployment, we'll return a simplified response
-        # In a real implementation, you would fetch data and run the simulation
+        # For deployment, we just acknowledge receipt of the request
+        timestamp = datetime.datetime.now().isoformat()
         
         response = {
-            "message": "Backtest request received and will be processed asynchronously",
+            "message": "Backtest request received",
+            "timestamp": timestamp,
             "parameters": {
                 "tickers": self.tickers,
                 "start_date": self.start_date,
@@ -54,7 +54,8 @@ class BacktesterLite:
                 "provider": self.model_provider,
                 "analysts": self.selected_analysts
             },
-            "status": "queued"
+            "status": "processed",
+            "note": "This is a lightweight API. For full backtesting functionality, please run the application locally."
         }
         
         return response
@@ -64,6 +65,11 @@ class BacktesterLite:
         Return simplified performance metrics
         """
         return {
-            "message": "Performance analysis will be generated after backtest completion",
-            "status": "pending"
+            "message": "Performance analysis in lightweight version",
+            "note": "This is a simplified API deployed on Vercel. For full functionality, please run the application locally.",
+            "example_metrics": {
+                "sharpe_ratio": 1.5,
+                "max_drawdown": -0.15,
+                "total_return": 0.25
+            }
         } 

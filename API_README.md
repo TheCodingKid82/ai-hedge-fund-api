@@ -128,39 +128,55 @@ curl -X POST http://localhost:5000/api/hedge-fund \
 
 ## Deployment to Vercel
 
-This API is optimized for deployment to Vercel. Due to Vercel's serverless function size limitations (250MB), we've created a lightweight version for deployment.
+This API is optimized for deployment to Vercel. Due to Vercel's serverless function limitations, we've created a significantly simplified version for deployment:
+
+### Important Deployment Limitations
+
+**The Vercel deployment has the following limitations:**
+- It provides a mock/simplified API interface only
+- It doesn't perform actual backtesting calculations
+- It returns placeholder data instead of real results
+- It's intended as a demonstration of the API structure
+
+**For full functionality**, you must run the application locally as described below.
 
 ### Deployment Steps
 
 1. Push your code to GitHub
 2. Connect your GitHub repository to Vercel
-3. Configure the deployment:
+3. Ensure the following settings:
    - Build Command: `pip install -r requirements.txt`
    - Output Directory: `.`
    - Install Command: `pip install -r requirements.txt`
 
 ### Local vs. Deployed Functionality
 
-The deployed version on Vercel uses a lightweight implementation that:
-- Returns immediate responses for API calls
-- Queues actual processing to be done asynchronously
-- Avoids heavy dependencies like pandas and matplotlib
+| Feature | Local Deployment | Vercel Deployment |
+|---------|-----------------|-------------------|
+| Real-time backtesting | ✅ Yes | ❌ No (mock responses) |
+| Full agent capabilities | ✅ Yes | ❌ No (simplified) |
+| Heavy dependencies | ✅ Yes | ❌ No (minimal only) |
+| API structure | ✅ Complete | ✅ Complete |
 
-For full functionality with real-time processing, run the API locally using:
+### Running Locally (Full Functionality)
+
+For complete functionality with real-time processing:
 ```bash
+# Install full dependencies
 pip install -r requirements-dev.txt
+
+# Run the server
 python server.py
 ```
 
-### Troubleshooting Vercel Deployment
+### Why These Limitations Exist
 
-If you encounter deployment issues:
-
-1. **Function Size Limit**: Ensure you're using the lightweight requirements.txt
-2. **Function Count Limit**: Make sure vercel.json is configured to use only api/index.py
-3. **Dependencies**: Check that all dependencies in requirements.txt are compatible with Vercel's environment
+Vercel has strict limitations on serverless functions:
+1. **Size Limit**: Maximum 250MB unzipped function size
+2. **Function Count**: Limited to 12 functions on free tier
+3. **Execution Duration**: Limited to 10 seconds on free tier
 
 For production use cases requiring full functionality, consider:
-- Using a different hosting provider (Heroku, DigitalOcean, AWS)
-- Implementing a queue-based architecture with separate worker processes
-- Splitting the application into microservices 
+- Using a dedicated server (AWS EC2, DigitalOcean Droplet, etc.)
+- Setting up AWS Lambda with layers for larger dependencies
+- Implementing a database-backed API with background processing 
