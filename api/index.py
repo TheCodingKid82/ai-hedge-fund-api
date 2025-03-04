@@ -1,64 +1,14 @@
 from flask import Flask, request, jsonify
-import os
+from api.backtester import Backtester
+from api.main import run_hedge_fund
 import json
+import os
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
-
-# Simplified portfolio_management_agent function for Vercel deployment
-def portfolio_management_agent(*args, **kwargs):
-    return "This is a simplified agent for Vercel deployment"
-
-# Simplified backtester for Vercel deployment
-class BacktesterLite:
-    def __init__(self, agent, tickers, start_date, end_date, initial_capital, **kwargs):
-        self.tickers = tickers
-        self.start_date = start_date
-        self.end_date = end_date
-        self.initial_capital = initial_capital
-        self.kwargs = kwargs
-    
-    def run_backtest(self):
-        return {
-            "message": "Backtest request received",
-            "parameters": {
-                "tickers": self.tickers,
-                "start_date": self.start_date,
-                "end_date": self.end_date,
-                "initial_capital": self.initial_capital,
-                **self.kwargs
-            },
-            "status": "processed",
-            "note": "This is a lightweight API deployment. For full functionality, please run the application locally."
-        }
-    
-    def analyze_performance(self):
-        return {
-            "message": "Performance analysis in lightweight version",
-            "note": "This is a simplified API deployed on Vercel. For full functionality, please run the application locally.",
-            "example_metrics": {
-                "sharpe_ratio": 1.5,
-                "max_drawdown": -0.15,
-                "total_return": 0.25
-            }
-        }
-
-# Simplified run_hedge_fund function for Vercel
-def run_hedge_fund(tickers, start_date, end_date, **kwargs):
-    return {
-        "message": "Hedge fund analysis request received",
-        "parameters": {
-            "tickers": tickers,
-            "start_date": start_date,
-            "end_date": end_date,
-            **kwargs
-        },
-        "status": "processed",
-        "note": "This is a lightweight API deployment. For full functionality, please run the application locally."
-    }
 
 @app.route('/')
 def home():
@@ -85,8 +35,10 @@ def backtest():
         selected_analysts = data.get('selected_analysts', [])
         initial_margin_requirement = float(data.get('initial_margin_requirement', 0.0))
         
-        # Create Backtester instance
-        backtester = BacktesterLite(
+        # Create Backtester instance with the agent function
+        from api.agents.portfolio_manager import portfolio_management_agent
+        
+        backtester = Backtester(
             agent=portfolio_management_agent,
             tickers=tickers,
             start_date=start_date,
@@ -155,6 +107,3 @@ def hedge_fund():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-
-# This is required for Vercel serverless deployment
-# The variable name 'app' is what Vercel looks for by default
