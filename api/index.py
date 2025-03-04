@@ -1,7 +1,4 @@
 from flask import Flask, request, jsonify
-from api.backtester import Backtester
-from api.main import run_hedge_fund
-import json
 import os
 from dotenv import load_dotenv
 
@@ -17,6 +14,9 @@ def home():
 @app.route('/api/backtest', methods=['POST'])
 def backtest():
     try:
+        # Import heavy modules only when needed
+        from api.backtester import Backtester
+        
         data = request.json
         
         # Validate required parameters
@@ -69,6 +69,9 @@ def backtest():
 @app.route('/api/hedge-fund', methods=['POST'])
 def hedge_fund():
     try:
+        # Import heavy modules only when needed
+        from api.main import run_hedge_fund
+        
         data = request.json
         
         # Validate required parameters

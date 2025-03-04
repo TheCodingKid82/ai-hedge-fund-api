@@ -1,0 +1,41 @@
+# Ignore large files or directories not needed for production
+.git
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Ignore development files
+.vscode/
+.idea/
+.pytest_cache/
+poetry.lock
+pyproject.toml
+
+# Ignore data files
+*.csv
+*.json
+*.pkl
+*.h5
+*.model
+*.joblib
+*.bson
+
+# Keep only necessary modules
+# Don't ignore api/ directory as it contains the main API code 
