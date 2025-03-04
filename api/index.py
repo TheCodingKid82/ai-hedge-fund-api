@@ -1,9 +1,16 @@
 from flask import Flask, request, jsonify
+# Fix imports for Vercel deployment
+import os
+import sys
+import json
+from dotenv import load_dotenv
+
+# Add current directory to path to help with imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Now import the modules with the correct path
 from api.backtester import Backtester
 from api.main import run_hedge_fund
-import json
-import os
-from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
@@ -107,3 +114,6 @@ def hedge_fund():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
+# This is required for Vercel serverless deployment
+# The variable name 'app' is what Vercel looks for by default
