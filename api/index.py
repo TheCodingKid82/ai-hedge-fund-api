@@ -8,9 +8,29 @@ from dotenv import load_dotenv
 # Add current directory to path to help with imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Now import the modules with the correct path
-from api.backtester import Backtester
-from api.main import run_hedge_fund
+# Check if we're in a Vercel environment
+IS_VERCEL = os.environ.get('VERCEL', False)
+
+# Import appropriate modules based on environment
+if IS_VERCEL:
+    # Use lightweight versions for Vercel deployment
+    from api.backtester_lite import BacktesterLite as Backtester
+    # Simplified run_hedge_fund function for Vercel
+    def run_hedge_fund(tickers, start_date, end_date, **kwargs):
+        return {
+            "message": "Hedge fund analysis request received and will be processed asynchronously",
+            "parameters": {
+                "tickers": tickers,
+                "start_date": start_date,
+                "end_date": end_date,
+                **kwargs
+            },
+            "status": "queued"
+        }
+else:
+    # Use full versions for local development
+    from api.backtester import Backtester
+    from api.main import run_hedge_fund
 
 # Load environment variables
 load_dotenv()

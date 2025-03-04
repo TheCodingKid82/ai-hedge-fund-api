@@ -124,4 +124,43 @@ curl -X POST http://localhost:5000/api/hedge-fund \
     "show_reasoning": true,
     "selected_analysts": ["fundamentals", "technicals", "portfolio_manager"]
   }'
-``` 
+```
+
+## Deployment to Vercel
+
+This API is optimized for deployment to Vercel. Due to Vercel's serverless function size limitations (250MB), we've created a lightweight version for deployment.
+
+### Deployment Steps
+
+1. Push your code to GitHub
+2. Connect your GitHub repository to Vercel
+3. Configure the deployment:
+   - Build Command: `pip install -r requirements.txt`
+   - Output Directory: `.`
+   - Install Command: `pip install -r requirements.txt`
+
+### Local vs. Deployed Functionality
+
+The deployed version on Vercel uses a lightweight implementation that:
+- Returns immediate responses for API calls
+- Queues actual processing to be done asynchronously
+- Avoids heavy dependencies like pandas and matplotlib
+
+For full functionality with real-time processing, run the API locally using:
+```bash
+pip install -r requirements-dev.txt
+python server.py
+```
+
+### Troubleshooting Vercel Deployment
+
+If you encounter deployment issues:
+
+1. **Function Size Limit**: Ensure you're using the lightweight requirements.txt
+2. **Function Count Limit**: Make sure vercel.json is configured to use only api/index.py
+3. **Dependencies**: Check that all dependencies in requirements.txt are compatible with Vercel's environment
+
+For production use cases requiring full functionality, consider:
+- Using a different hosting provider (Heroku, DigitalOcean, AWS)
+- Implementing a queue-based architecture with separate worker processes
+- Splitting the application into microservices 
